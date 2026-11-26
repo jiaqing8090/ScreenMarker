@@ -17,7 +17,7 @@ public class OverlayService extends Service {
     final String[] colorNames={"红","黄","青","白","绿","粉"};
     public IBinder onBind(Intent i){return null;}
     int dp(float v){return (int)(v*getResources().getDisplayMetrics().density+.5f);}
-    GradientDrawable bg(int color,float radius){GradientDrawable g=new GradientDrawable();g.setColor(color);g.setCornerRadius(dp(radius));g.setStroke(dp(1),0x443ffffff);return g;}
+    GradientDrawable bg(int color,float radius){GradientDrawable g=new GradientDrawable();g.setColor(color);g.setCornerRadius(dp(radius));g.setStroke(dp(1),0x44ffffff);return g;}
 
     public void onCreate(){super.onCreate();wm=(WindowManager)getSystemService(WINDOW_SERVICE);createBoard();createPanel();createBubble();}
     void createBoard(){board=new Board();boardParams=new WindowManager.LayoutParams(-1,-1,WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE|WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN|WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,PixelFormat.TRANSLUCENT);wm.addView(board,boardParams);}
