@@ -29,7 +29,18 @@ public class OverlayService extends Service {
         final float[] down=new float[4];head.setOnTouchListener((v,e)->{if(e.getAction()==MotionEvent.ACTION_DOWN){down[0]=e.getRawX();down[1]=e.getRawY();down[2]=panelParams.x;down[3]=panelParams.y;return true;}if(e.getAction()==MotionEvent.ACTION_MOVE){panelParams.x=(int)(down[2]+e.getRawX()-down[0]);panelParams.y=(int)(down[3]+e.getRawY()-down[1]);wm.updateViewLayout(panel,panelParams);return true;}return true;});mini.setOnClickListener(v->collapse());}
     TextView label(String text,float size){TextView v=new TextView(this);v.setText(text);v.setTextSize(size);v.setTextColor(Color.WHITE);v.setGravity(Gravity.CENTER_VERTICAL);return v;}
     void addRow(String[] names){LinearLayout row=new LinearLayout(this);row.setGravity(Gravity.CENTER);for(String name:names){TextView b=label(name,12);b.setGravity(Gravity.CENTER);b.setBackground(bg(0xff303641,10));LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(0,dp(42),1);p.setMargins(dp(3),dp(3),dp(3),dp(3));row.addView(b,p);b.setOnClickListener(v->action(name,b));}panel.addView(row,new LinearLayout.LayoutParams(-1,dp(48)));}
-    void createBubble(){bubble=label("✎",25);bubble.setGravity(Gravity.CENTER);bubble.setBackground(bg(0xeeff4d4f,24));bubbleParams=new WindowManager.LayoutParams(dp(52),dp(52),WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE|WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,PixelFormat.TRANSLUCENT);bubbleParams.gravity=Gravity.RIGHT|Gravity.CENTER_VERTICAL;bubbleParams.x=dp(10);bubble.setOnClickListener(v->expand());bubble.setVisibility(View.GONE);wm.addView(bubble,bubbleParams);}
+    void createBubble(){
+        bubble=label("✎",25);bubble.setGravity(Gravity.CENTER);bubble.setBackground(bg(0xeeff4d4f,24));
+        bubbleParams=new WindowManager.LayoutParams(dp(52),dp(52),WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE|WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,PixelFormat.TRANSLUCENT);
+        bubbleParams.gravity=Gravity.TOP|Gravity.LEFT;bubbleParams.x=dp(10);bubbleParams.y=dp(300);
+        final float[] down=new float[4];final boolean[] moved=new boolean[1];
+        bubble.setOnTouchListener((v,e)->{
+            if(e.getAction()==MotionEvent.ACTION_DOWN){down[0]=e.getRawX();down[1]=e.getRawY();down[2]=bubbleParams.x;down[3]=bubbleParams.y;moved[0]=false;return true;}
+            if(e.getAction()==MotionEvent.ACTION_MOVE){float dx=e.getRawX()-down[0],dy=e.getRawY()-down[1];if(Math.abs(dx)>dp(4)||Math.abs(dy)>dp(4))moved[0]=true;if(moved[0]){bubbleParams.x=(int)(down[2]+dx);bubbleParams.y=(int)(down[3]+dy);wm.updateViewLayout(bubble,bubbleParams);}return true;}
+            if(e.getAction()==MotionEvent.ACTION_UP){if(!moved[0])expand();return true;}return true;
+        });
+        bubble.setVisibility(View.GONE);wm.addView(bubble,bubbleParams);
+    }
     void collapse(){panel.setVisibility(View.GONE);bubble.setVisibility(View.VISIBLE);}
     void expand(){bubble.setVisibility(View.GONE);panel.setVisibility(View.VISIBLE);}
     void action(String s,TextView button){switch(s){case "画笔":tool=0;setDraw(true);break;case "箭头":tool=1;setDraw(true);break;case "圆圈":tool=2;setDraw(true);break;case "矩形":tool=3;setDraw(true);break;case "撤销":if(!board.items.isEmpty())board.items.remove(board.items.size()-1);break;case "单擦":tool=4;setDraw(true);break;case "全擦":board.items.clear();break;case "颜色":colorIndex=(colorIndex+1)%colors.length;colorDot.setTextColor(colors[colorIndex]);Toast.makeText(this,"颜色："+colorNames[colorIndex],Toast.LENGTH_SHORT).show();break;case "穿透":setDraw(!drawMode);button.setText(drawMode?"穿透":"绘制");break;case "关闭":stopSelf();return;}board.invalidate();}
