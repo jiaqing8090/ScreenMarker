@@ -1,0 +1,10 @@
+name: Runner diagnostic
+'on':
+  push:
+    branches: [main]
+jobs:
+  diagnostic:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prove runner starts
+        run: echo RUNNER_STARTED
