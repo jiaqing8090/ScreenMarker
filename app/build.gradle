@@ -3,7 +3,7 @@ plugins { id 'com.android.application' }
 android {
     namespace 'com.xiaoyang.screenmarker'
     compileSdk 35
-    defaultConfig { applicationId 'com.xiaoyang.screenmarker'; minSdk 23; targetSdk 28; versionCode 10100; versionName '1.1.0' }
+    defaultConfig { applicationId 'com.xiaoyang.screenmarker'; minSdk 23; targetSdk 28; versionCode 10101; versionName '1.1.1' }
 }
 
 dependencies { implementation 'androidx.core:core:1.15.0' }
